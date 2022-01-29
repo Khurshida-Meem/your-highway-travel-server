@@ -19,6 +19,13 @@ async function run() {
         const database = client.db('your_highway')
         const blogsCollection = database.collection('blogs');
 
+        // POST API
+        app.post('/blogs', async (req, res) => {
+            const newBlog = req.body;
+            const result = await blogsCollection.insertOne(newBlog);
+            res.send(result);
+        });
+
 
 
     }
