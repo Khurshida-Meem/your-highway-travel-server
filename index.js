@@ -18,6 +18,8 @@ async function run() {
         await client.connect();
         const database = client.db('Your-Highway')
         const placeCollection = database.collection('destination');
+        const reviewsCollection = database.collection("reviews");
+        const blogsCollection = database.collection("blogs");
 
         // make blogs by POST API
         app.post('/places', async (req, res) => {
@@ -37,8 +39,53 @@ async function run() {
         app.get('/places/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
-            const places = await placeCollection.findOne(query);
-            res.send(places);
+            const reviews = await placeCollection.findOne(query);
+            res.send(reviews);
+        });
+
+        // delete order by id under one email
+        app.delete('/places/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await placeCollection.deleteOne(query);
+            res.json(result);
+        });
+
+        // make blogs by POST API
+        app.post('/reviews', async (req, res) => {
+            const newPlace = req.body;
+            const result = await reviewsCollection.insertOne(newPlace);
+            res.send(result);
+        });
+
+        // GET products API
+        app.get('/reviews', async (req, res) => {
+            const cursor = reviewsCollection.find({});
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+        });
+
+        // GET dynamic API
+        app.get('/reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const reviews = await reviewsCollection.findOne(query);
+            res.send(reviews);
+        });
+
+        // GET reviews by email
+        app.post('/reviews/byEmail', async (req, res) => {
+            const email = req.body;
+            const query = { email: { $in: email } }
+            const review = await reviewsCollection.find(query).toArray();
+            res.send(review);
+        });
+        // delete review by id under one email
+        app.delete('/reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await reviewsCollection.deleteOne(query);
+            res.json(result);
         });
 
 
