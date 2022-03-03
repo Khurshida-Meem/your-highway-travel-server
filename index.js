@@ -16,14 +16,21 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
-        const database = client.db('your_highway')
-        const blogsCollection = database.collection('blogs');
+        const database = client.db('Your-Highway')
+        const placeCollection = database.collection('destination');
 
         // make blogs by POST API
-        app.post('/blogs', async (req, res) => {
-            const newBlog = req.body;
-            const result = await blogsCollection.insertOne(newBlog);
+        app.post('/places', async (req, res) => {
+            const newPlace = req.body;
+            const result = await placeCollection.insertOne(newPlace);
             res.send(result);
+        });
+
+        // GET products API
+        app.get('/places', async (req, res) => {
+            const cursor = placeCollection.find({});
+            const places = await cursor.toArray();
+            res.send(places);
         });
 
 
