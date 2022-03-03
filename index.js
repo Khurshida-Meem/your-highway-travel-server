@@ -39,8 +39,8 @@ async function run() {
         app.get('/places/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
-            const reviews = await placeCollection.findOne(query);
-            res.send(reviews);
+            const places = await placeCollection.findOne(query);
+            res.send(places);
         });
 
         // delete order by id under one email
@@ -53,8 +53,8 @@ async function run() {
 
         // make blogs by POST API
         app.post('/reviews', async (req, res) => {
-            const newPlace = req.body;
-            const result = await reviewsCollection.insertOne(newPlace);
+            const newReview = req.body;
+            const result = await reviewsCollection.insertOne(newReview);
             res.send(result);
         });
 
@@ -86,6 +86,13 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const result = await reviewsCollection.deleteOne(query);
             res.json(result);
+        });
+
+        // make blogs by POST API
+        app.post('/blogs', async (req, res) => {
+            const newBlog = req.body;
+            const result = await blogsCollection.insertOne(newBlog);
+            res.send(result);
         });
 
         // GET blogs API
