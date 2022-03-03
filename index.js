@@ -21,14 +21,14 @@ async function run() {
         const reviewsCollection = database.collection("reviews");
         const blogsCollection = database.collection("blogs");
 
-        // make blogs by POST API
+        // make places by POST API
         app.post('/places', async (req, res) => {
             const newPlace = req.body;
             const result = await placeCollection.insertOne(newPlace);
             res.send(result);
         });
 
-        // GET products API
+        // GET places API
         app.get('/places', async (req, res) => {
             const cursor = placeCollection.find({});
             const places = await cursor.toArray();
@@ -85,6 +85,36 @@ async function run() {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await reviewsCollection.deleteOne(query);
+            res.json(result);
+        });
+
+        // GET blogs API
+        app.get('/blogs', async (req, res) => {
+            const cursor = blogsCollection.find({});
+            const blogs = await cursor.toArray();
+            res.send(blogs);
+        });
+
+        // GET dynamic API
+        app.get('/blogs/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const blogs = await blogsCollection.findOne(query);
+            res.send(blogs);
+        });
+
+        // GET blogs by email
+        app.post('/blogs/byEmail', async (req, res) => {
+            const email = req.body;
+            const query = { email: { $in: email } }
+            const blogs = await blogsCollection.find(query).toArray();
+            res.send(blogs);
+        });
+        // delete blogs by id under one email
+        app.delete('/blogs/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await blogsCollection.deleteOne(query);
             res.json(result);
         });
 
