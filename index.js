@@ -125,6 +125,22 @@ async function run() {
             res.json(result);
         });
 
+        // UPDATE API
+        app.put('/blogs/:id', async (req, res) => {
+            const blog = req.body;
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    status: blog.status
+                }
+            };
+            const result = await blogsCollection.updateOne(filter, updateDoc, options);
+            res.json(result);
+
+        })
+
 
 
     }
