@@ -100,9 +100,10 @@ async function run() {
         const options = { upsert: true };
         const updateDoc = {
           $set: {
-            name: review.name,
-            designation: review.designation,
-            comment: review.comment,
+            name: review?.name,
+            designation: review?.designation,
+            comment: review?.comment,
+            star: review?.star,
           },
         };
         const result = await reviewsCollection.updateOne(
