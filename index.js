@@ -55,6 +55,29 @@ async function run() {
         res.json(result);
       });
 
+      // UPDATE place API
+      app.put("/places/:id", async (req, res) => {
+        const place = req.body;
+        const id = req.params.id;
+        const filter = { _id: ObjectId(id) };
+        const options = { upsert: true };
+        const updateDoc = {
+          $set: {
+            destination: place?.destination,
+            country: place?.country,
+            thumb: place?.thumb,
+            description: place?.description,
+            cost: place?.cost,
+          },
+        };
+        const result = await placeCollection.updateOne(
+          filter,
+          updateDoc,
+          options
+        );
+        res.json(result);
+      });
+
       // make blogs by POST API
       app.post("/reviews", async (req, res) => {
         const newReview = req.body;
