@@ -24,6 +24,7 @@ async function run() {
       const reviewsCollection = database.collection("reviews");
       const blogsCollection = database.collection("blogs");
       const usersCollection = database.collection("users");
+      const hotelsCollection = database.collection("hotels");
 
       // make places by POST API
       app.post("/places", async (req, res) => {
@@ -77,6 +78,40 @@ async function run() {
         );
         res.json(result);
       });
+
+      // ============================ Hotels ==================================
+
+      // make hotels by POST API
+      app.post("/hotels", async (req, res) => {
+        const newHotel = req.body;
+        const result = await hotelsCollection.insertOne(newHotel);
+        res.send(result);
+      });
+
+      // GET hotels API
+      app.get("/hotels", async (req, res) => {
+        const cursor = hotelsCollection.find({});
+        const hotels = await cursor.toArray();
+        res.send(hotels);
+      });
+
+      // GET dynamic API
+      app.get("/hotels/:id", async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const hotels = await hotelsCollection.findOne(query);
+        res.send(hotels);
+      });
+
+      // delete hotel by id under one email
+      app.delete("/hotels/:id", async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const result = await hotelsCollection.deleteOne(query);
+        res.json(result);
+      });
+
+      // ============================ Blogs ==================================
 
       // make blogs by POST API
       app.post("/reviews", async (req, res) => {
