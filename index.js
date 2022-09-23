@@ -69,6 +69,15 @@ async function run() {
             thumb: place?.thumb,
             description: place?.description,
             cost: place?.cost,
+            comments: {
+              $push: {
+                email: place.email,
+                comment: place.comment,
+                img: place.photoURL,
+                name: place.displayName,
+                date: place.date,
+              },
+            },
           },
         };
         const result = await placeCollection.updateOne(
