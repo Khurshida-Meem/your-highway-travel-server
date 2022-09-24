@@ -87,17 +87,19 @@ async function run() {
         res.send(result);
       });
 
-      // GET comments API
-      app.get("/comments", async (req, res) => {
-        const cursor = placeCollection.find({});
-        const comments = await cursor.toArray();
-        res.send(comments);
-      });
 
       // GET comments API
       app.get("/comments", async (req, res) => {
         const cursor = commentsCollection.find({});
         const comments = await cursor.toArray();
+        res.send(comments);
+      });
+
+      // GET dynamic API
+      app.get("/comments/:id", async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const comments = await commentsCollection.findOne(query);
         res.send(comments);
       });
 
