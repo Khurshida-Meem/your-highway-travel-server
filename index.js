@@ -25,6 +25,7 @@ async function run() {
       const blogsCollection = database.collection("blogs");
       const usersCollection = database.collection("users");
       const hotelsCollection = database.collection("hotels");
+      const commentsCollection = database.collection("comments");
 
       // make places by POST API
       app.post("/places", async (req, res) => {
@@ -79,26 +80,19 @@ async function run() {
         res.json(result);
       });
 
-      // send comments API
-      app.post("/places/comments", async (req, res) => {
-        const comment = {
-          commentedBy: req.body.name,
-          email: req.body.email,
-          comment: req.body.comment,
-          img: req.body.img,
-          date: req.body.date,
-        };
-        const options = { upsert: true };
-        const result = placeCollection.findOneAndUpdate(
-          req.body.id,
-          {
-            $push: { comments: comment },
-          },
-          options
-        );
-        res.json(result);
+      /// make hotels by POST API
+      app.post("/comments", async (req, res) => {
+        const newComment = req.body;
+        const result = await commentsCollection.insertOne(newComment);
+        res.send(result);
       });
 
+      // GET comments API
+      app.get("/comments", async (req, res) => {
+        const cursor = commentsCollection.find({});
+        const comments = await cursor.toArray();
+        res.send(comments);
+      });
       // ============================ Hotels ==================================
 
       // make hotels by POST API
