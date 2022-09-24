@@ -80,11 +80,18 @@ async function run() {
         res.json(result);
       });
 
-      /// make hotels by POST API
+      /// make comment by POST API
       app.post("/comments", async (req, res) => {
         const newComment = req.body;
         const result = await commentsCollection.insertOne(newComment);
         res.send(result);
+      });
+
+      // GET comments API
+      app.get("/comments", async (req, res) => {
+        const cursor = placeCollection.find({});
+        const comments = await cursor.toArray();
+        res.send(comments);
       });
 
       // GET comments API
@@ -94,7 +101,7 @@ async function run() {
         res.send(comments);
       });
 
-      // delete comments by id under one email
+      // delete comments by id
       app.delete("/comments/:id", async (req, res) => {
         const id = req.params.id;
         const query = { _id: ObjectId(id) };
