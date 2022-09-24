@@ -93,6 +93,14 @@ async function run() {
         const comments = await cursor.toArray();
         res.send(comments);
       });
+
+      // delete comments by id under one email
+      app.delete("/comments/:id", async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const result = await commentsCollection.deleteOne(query);
+        res.json(result);
+      });
       // ============================ Hotels ==================================
 
       // make hotels by POST API
