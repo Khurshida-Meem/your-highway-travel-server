@@ -69,20 +69,31 @@ async function run() {
             thumb: place?.thumb,
             description: place?.description,
             cost: place?.cost,
-            comments: {
-              $push: {
-                email: place.email,
-                comment: place.comment,
-                img: place.photoURL,
-                name: place.displayName,
-                date: place.date,
-              },
-            },
           },
         };
         const result = await placeCollection.updateOne(
           filter,
           updateDoc,
+          options
+        );
+        res.json(result);
+      });
+
+      // send comments API
+      app.post("/places/comments", async (req, res) => {
+        const comment = {
+          commentedBy: req.body.name,
+          email: req.body.email,
+          comment: req.body.comment,
+          img: req.body.img,
+          date: req.body.date,
+        };
+        const options = { upsert: true };
+        const result = placeCollection.findOneAndUpdate(
+          req.body.id,
+          {
+            $push: { comments: comment },
+          },
           options
         );
         res.json(result);
