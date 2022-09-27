@@ -26,6 +26,7 @@ async function run() {
       const usersCollection = database.collection("users");
       const hotelsCollection = database.collection("hotels");
       const commentsCollection = database.collection("comments");
+      const bookingsCollection = database.collection("bookings");
 
       // make places by POST API
       app.post("/places", async (req, res) => {
@@ -49,7 +50,7 @@ async function run() {
         res.send(places);
       });
 
-      // delete order by id under one email
+      // delete places data by id under one email
       app.delete("/places/:id", async (req, res) => {
         const id = req.params.id;
         const query = { _id: ObjectId(id) };
@@ -86,7 +87,6 @@ async function run() {
         const result = await commentsCollection.insertOne(newComment);
         res.send(result);
       });
-
 
       // GET comments API
       app.get("/comments", async (req, res) => {
@@ -134,7 +134,7 @@ async function run() {
         res.send(hotels);
       });
 
-      // delete hotel by id under one email
+      // delete hotel by id
       app.delete("/hotels/:id", async (req, res) => {
         const id = req.params.id;
         const query = { _id: ObjectId(id) };
@@ -296,6 +296,57 @@ async function run() {
           option
         );
         res.send(result);
+      });
+
+      // -------------------- Bookings Management
+
+      // POST API to save orders
+      app.post("/bookings", async (req, res) => {
+        const newOrder = req.body;
+        const result = await bookingsCollection.insertOne(newOrder);
+        res.send(result);
+      });
+
+      // Get all Orders
+      app.get("/bookings", async (req, res) => {
+        const cursor = bookingsCollection.find({});
+        const bookings = await cursor.toArray();
+        res.send(bookings);
+      });
+
+      // orders by email
+      app.post("/bookings/byEmail", async (req, res) => {
+        const email = req.body;
+        const query = { email: { $in: email } };
+        const bookings = await bookingsCollection.find(query).toArray();
+        res.send(bookings);
+      });
+
+      // delete order by id under one email
+      app.delete("/bookings/:id", async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const result = await bookingsCollection.deleteOne(query);
+        res.json(result);
+      });
+
+      // UPDATE API
+      app.put("/bookings/:id", async (req, res) => {
+        const order = req.body;
+        const id = req.params.id;
+        const filter = { _id: ObjectId(id) };
+        const options = { upsert: true };
+        const updateDoc = {
+          $set: {
+            status: order.status,
+          },
+        };
+        const result = await bookingsCollection.updateOne(
+          filter,
+          updateDoc,
+          options
+        );
+        res.json(result);
       });
 
       // make admin
